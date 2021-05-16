@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '!5r20yf*_5kgvm!uib**6cuh2nz9b-rtvm90ni^e@9o6fcd+-('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1',"blueappbackend.herokuapp.com/","http://192.168.0.14:8080/"]
+ALLOWED_HOSTS = ['127.0.0.1',"bluebackend.herokuapp.com","http://192.168.0.14:8080/"]
 
 
 # Application definition
