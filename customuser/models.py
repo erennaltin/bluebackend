@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 class AccountManager(BaseUserManager):
-    def create_user(self, email, username, first_name, last_name, password= None, ):
+    def create_user(self, email, username, first_name, last_name, bio, Approvals, Declines, Comments, password= None, ):
         if not email:
             raise ValueError("Users must have an email adress!")
         if not username:
@@ -22,27 +22,27 @@ class AccountManager(BaseUserManager):
             username = username,
             first_name = first_name,
             last_name = last_name,
-            # bio= bio,
-            # Approvals = Approvals,
-            # Declines = Declines,
-            # Comments = Comments
+            bio= bio,
+            Approvals = Approvals,
+            Declines = Declines,
+            Comments = Comments
         )
         
         user.set_password(password)
         user.save(using = self._db)
         return user
     
-    def create_superuser(self, email, username, password, first_name,last_name):
+    def create_superuser(self, email, username, password, first_name,last_name, bio, Approvals, Declines, Comments):
         user = self.create_user(
             email = self.normalize_email(email),
             username = username,
             password = password,
             first_name = first_name,
             last_name = last_name,
-            # bio = bio,
-            # Approvals = Approvals,
-            # Declines = Declines,
-            # Comments = Comments
+            bio = bio,
+            Approvals = Approvals,
+            Declines = Declines,
+            Comments = Comments
         )
         
         user.is_admin = True
