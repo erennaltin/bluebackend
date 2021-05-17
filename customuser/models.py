@@ -32,17 +32,14 @@ class AccountManager(BaseUserManager):
         user.save(using = self._db)
         return user
     
-    def create_superuser(self, email, username, password, first_name,last_name,bio, Approvals, Declines, Comments,):
+    def create_superuser(self, email, username, password, first_name,last_name):
         user = self.create_user(
             email = self.normalize_email(email),
             username = username,
             password = password,
             first_name = first_name,
             last_name = last_name,
-            bio= bio,
-            Approvals = Approvals,
-            Declines = Declines,
-            Comments = Comments
+
         )
         
         user.is_admin = True
@@ -76,7 +73,7 @@ class Account(AbstractBaseUser):
 
     USERNAME_FIELD = "username"
     EMAIL_FIELD = "username"
-    REQUIRED_FIELDS = ['email','first_name','last_name','bio']
+    REQUIRED_FIELDS = ['email','first_name','last_name']
     
     objects = AccountManager()
     
