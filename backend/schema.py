@@ -1,4 +1,5 @@
 import graphene
+import os
 import random
 import uuid
 from graphene_django import DjangoObjectType, DjangoListField
@@ -7,6 +8,20 @@ from graphql_auth.schema import UserQuery, MeQuery
 from customuser.models import Account, UserImage
 from customuser.schema import AuthMutation
 from django.conf import settings
+from graphene_file_upload.scalars import Upload
+from io import BytesIO
+import shutil
+
+
+def write_bytesio_to_file(filename, bytesio):
+    """
+    Write the contents of the given BytesIO to a file.
+    Creates the file or overwrites the file if it does
+    not exist yet. 
+    """
+    with open(f'media/{filename}', "wb") as outfile:
+        # Copy the BytesIO stream to the output file
+        outfile.write(bytesio.getbuffer())
 
 
             
@@ -154,7 +169,6 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
     def resolve_decline(root,info, **kwargs):
         name = kwargs.get('name')
         try:
-            print("BURDADA")
             Decline.objects.get(name=name)
             return Decline.objects.get(name=True)
         except:
@@ -359,6 +373,25 @@ class removeComment(graphene.Mutation):
         user.Comments.remove(comment)
         comment.delete()
         return removeComment(Comment.objects.get(name=True))
+    
+    
+
+class UploadPhoto(graphene.Mutation):
+    class Arguments:
+        file = Upload(required=True)
+
+    success = graphene.Boolean()
+    name = graphene.String()
+
+    def mutate(self, info, file, **kwargs):
+        write_bytesio_to_file(file.name, file.file)
+        extension = file.name.split(".")
+        extension = extension[-1]
+        name = f'{uuid.uuid4()}.{extension}'
+        os.rename(f'media/{file.name}',f'media/{name}')
+     
+
+        return UploadPhoto(success=True, name=name)
         
 
 class Mutation(AuthMutation, graphene.ObjectType):
@@ -369,5 +402,6 @@ class Mutation(AuthMutation, graphene.ObjectType):
     remove_approval = removeApproval.Field()
     add_comment = addComment.Field()
     remove_comment = removeComment.Field()
+    upload_photo = UploadPhoto.Field()
 
-schema = graphene.Schema(query= Query, mutation= Mutation)
+schema = graphene.Schema(query= Query, mutation= Mutation, types=[Upload])
