@@ -384,6 +384,7 @@ class UploadPhoto(graphene.Mutation):
     name = graphene.String()
 
     def mutate(self, info, file, **kwargs):
+        def("Am I here?")
         write_bytesio_to_file(file.name, file.file)
         extension = file.name.split(".")
         extension = extension[-1]
