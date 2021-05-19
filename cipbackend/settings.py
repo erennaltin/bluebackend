@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django_filters'
 ]
 
-CORS_ALLOWED_ORIGINS = ["https://blueapplication.netlify.app","http://localhost"]
+# CORS_ALLOWED_ORIGINS = ["https://blueapplication.netlify.app","http://localhost"]
+CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
