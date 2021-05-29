@@ -3,9 +3,9 @@ import os
 import random
 import uuid
 from graphene_django import DjangoObjectType, DjangoListField
-from .models import Posts, PostImage,Approval, Decline, Comment 
+from .models import Posts,Approval, Decline, Comment 
 from graphql_auth.schema import UserQuery, MeQuery
-from customuser.models import Account, UserImage
+from customuser.models import Account
 from customuser.schema import AuthMutation
 from django.conf import settings
 from graphene_file_upload.scalars import Upload
@@ -14,25 +14,12 @@ import shutil
 
 
 def write_bytesio_to_file(filename, bytesio):
-    """
-    Write the contents of the given BytesIO to a file.
-    Creates the file or overwrites the file if it does
-    not exist yet. 
-    """
     with open(f'media/{filename}', "wb") as outfile:
         # Copy the BytesIO stream to the output file
         outfile.write(bytesio.getbuffer())
+        return outfile
 
 
-            
-# class UserImageType(DjangoObjectType):
-#     class Meta:
-#         model = UserImage
-#         fields = ("post", "image")
-        
-#         def resolve_image(self,info):
-#             self.user_image = info.context.build_absolute_uri(self.image.url)
-#             return settings.MEDIA_ROOT + self.user_image
             
 class ApprovalType(DjangoObjectType):
     class Meta:
@@ -66,16 +53,16 @@ class PostsType(DjangoObjectType):
                   'uuid',
                   'Owner',
                   'PublishDate',
-                  'Photo',
                   'Title',
+                  'Photo',
                   'Text',
                   'Tags',
                   'Category',
                   'ObjectionTo',
-                  'post_image',
                   'Approvals',
                   'Declines',
-                  'Comments'
+                  'Comments',
+                  'Objections'
                   )
         interfaces = (graphene.relay.Node, )
         Approvals = graphene.Field(ApprovalType)
@@ -86,18 +73,6 @@ class PostsType(DjangoObjectType):
    
         
 
-        
-        
-class PostImageType(DjangoObjectType):
-    class Meta:
-        model = PostImage
-        fields = ("post", "image")
-        
-    def resolve_post_image(self,info):
-        if self.image:
-            self.image = info.context.build_absolute_uri(self.image)
-        return self.image
-        
         
         
 class AccountsType(DjangoObjectType):
@@ -115,7 +90,6 @@ class AccountsType(DjangoObjectType):
                   'is_active',
                   'is_staff',
                   'is_superuser',
-                  'user_image',
                   'Approvals',
                   'Declines',
                   'Comments')
@@ -129,7 +103,6 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
     accounts = graphene.Field(AccountsType, Username= graphene.String())
     random_post = graphene.Field(PostsType, uuid= graphene.String()) 
     posts = graphene.List(PostsType, Owner= graphene.String(), uuid= graphene.String())
-    post_image = graphene.Field(PostImageType,)
     approval = graphene.Field(ApprovalType, name= graphene.String())
     decline = graphene.Field(DeclineType, name= graphene.String())
 
@@ -139,9 +112,14 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
         Owner = kwargs.get('Owner')
         uuid = kwargs.get('uuid')
         
-        if not Owner:
+        
+        if Owner:
+            return Posts.objects.filter(Owner__username= Owner)
+        elif uuid:
+            return Posts.objects.filter(uuid=uuid)
+        else:
             return Posts.objects.all()
-        return Posts.objects.filter(Owner__username= Owner)
+        
 
     def resolve_random_post(root, info, **kwargs):
         uuid = kwargs.get('uuid')
@@ -209,6 +187,7 @@ class AddPost(graphene.Mutation):
     @staticmethod
     def mutate(root,info, post_data):
         owner_obj = Account.objects.get(username= post_data['Owner'])
+        ObjectedPost = Posts.objects.get(uuid=post_data['ObjectionTo'])
         _post = Posts.objects.create(Owner= owner_obj,
                                     # PublishDate= post_data['PublishDate'],
                                     Title= post_data['Title'],
@@ -218,6 +197,7 @@ class AddPost(graphene.Mutation):
                                     Category= post_data['Category'],
                                     ObjectionTo= post_data['ObjectionTo']
                                      )
+        ObjectedPost.Objections.add(_post)
         return AddPost(post=_post)
 
 class RemovePost(graphene.Mutation):
@@ -384,15 +364,44 @@ class UploadPhoto(graphene.Mutation):
     name = graphene.String()
 
     def mutate(self, info, file, **kwargs):
-        def("Am I here?")
-        write_bytesio_to_file(file.name, file.file)
-        extension = file.name.split(".")
-        extension = extension[-1]
-        name = f'{uuid.uuid4()}.{extension}'
-        os.rename(f'media/{file.name}',f'media/{name}')
+        outfile = write_bytesio_to_file(file.name, file.file)
+        photo_uuid= str(uuid.uuid4())
      
 
-        return UploadPhoto(success=True, name=name)
+        return UploadPhoto(success=True, name=photo_uuid)
+        
+        
+class UpdateAccount(graphene.Mutation):
+    account = graphene.Field(AccountsType)
+    
+    class Arguments:
+        username = graphene.String(required= True)
+        first_name = graphene.String(required= True)
+        last_name = graphene.String(required= True)
+        bio = graphene.String()
+        photo = graphene.String()
+        
+    @staticmethod
+    def mutate(root,info,**kwargs):
+        username = kwargs.get("username", None)
+        first_name = kwargs.get("first_name", None)
+        last_name = kwargs.get("last_name", None)
+        bio = kwargs.get("bio", None)
+        photo = kwargs.get("photo", "https://firebasestorage.googleapis.com/v0/b/cipbackend.appspot.com/o/default.png?alt=media&token=874e122b-ad48-4339-bf73-327e7d681b94")
+        
+        account = Account.objects.get(username=username)
+        if not first_name == None:
+             account.first_name = first_name
+        if not last_name == None:
+             account.last_name = last_name
+        if not bio == None:
+             account.bio = bio
+        if not photo == "https://firebasestorage.googleapis.com/v0/b/cipbackend.appspot.com/o/default.png?alt=media&token=874e122b-ad48-4339-bf73-327e7d681b94" or not photo == "":
+             account.photo = photo
+        account.save()
+        return UpdateAccount(account)
+        
+        
         
 
 class Mutation(AuthMutation, graphene.ObjectType):
@@ -404,5 +413,6 @@ class Mutation(AuthMutation, graphene.ObjectType):
     add_comment = addComment.Field()
     remove_comment = removeComment.Field()
     upload_photo = UploadPhoto.Field()
+    update_account = UpdateAccount.Field()
 
 schema = graphene.Schema(query= Query, mutation= Mutation, types=[Upload])

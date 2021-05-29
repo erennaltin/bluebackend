@@ -18,7 +18,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 import django_heroku
 import os
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -46,7 +45,8 @@ INSTALLED_APPS = [
     'customuser',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'graphql_auth',
-    'django_filters'
+    'django_filters',
+
 ]
 
 # CORS_ALLOWED_ORIGINS = ["https://blueapplication.netlify.app","http://localhost"]
@@ -163,11 +163,10 @@ GRAPHQL_JWT = {
     "REGISTER_MUTATION_FIELDS" :{
     "email": "String",
     "username": "String",
-    "luck_number": "Int",
 }
 }
 GRAPHQL_AUTH = {
-    'UPDATE_MUTATION_FIELDS': ['first_name', 'last_name', 'bio'], 
+    'UPDATE_MUTATION_FIELDS': ['first_name', 'last_name', 'bio','photo'], 
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

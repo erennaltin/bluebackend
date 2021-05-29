@@ -10,9 +10,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='posts',
-            name='Photo',
-            field=models.ImageField(default='default.png', upload_to='', verbose_name='post_image'),
-        ),
+        # migrations.AlterField(
+        #     model_name='posts',
+        #     name='Photo',
+        #     field=models.ImageField(default='default.png', upload_to='', verbose_name='post_image'),
+        # ),
     ]

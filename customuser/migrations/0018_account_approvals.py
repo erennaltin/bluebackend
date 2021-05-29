@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='account',
-            name='Approvals',
-            field=models.ManyToManyField(blank=True, to='backend.Approval'),
-        ),
+        # migrations.AddField(
+        #     model_name='account',
+        #     name='Approvals',
+        #     field=models.ManyToManyField(blank=True, to='backend.Approval'),
+        # ),
     ]

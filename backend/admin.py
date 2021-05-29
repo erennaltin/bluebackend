@@ -1,18 +1,8 @@
 from django.contrib import admin
-from .models import Posts, PostImage, Approval, Decline, Comment
-
-
-class PostImageInline(admin.TabularInline):
-    model = PostImage
+from .models import Posts, Approval, Decline, Comment
 
 
 admin.site.register(Approval)
 admin.site.register(Decline)
 admin.site.register(Comment)
-
-
-@admin.register(Posts)
-class ProductAdmin(admin.ModelAdmin):
-    inlines = [
-        PostImageInline,
-    ]
+admin.site.register(Posts)

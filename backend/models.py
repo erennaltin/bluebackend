@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from customuser.models import Account
 import datetime
+from cloudinary.models import CloudinaryField
 
 class Approval(models.Model):
     post = models.ForeignKey('Posts', on_delete=models.CASCADE)
@@ -45,17 +46,8 @@ class Posts(models.Model):
     Approvals = models.ManyToManyField('Approval', blank= True)
     Declines = models.ManyToManyField('Decline', blank= True)
     Comments = models.ManyToManyField('Comment', blank= True)
+    Objections = models.ManyToManyField('Posts', blank= True)
     
     def __str__(self):
         return str(self.uuid)
-    
-    
-class PostImage(models.Model):
-    post = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name="post_image")
-    image = models.ImageField(verbose_name= "image",
-                              help_text= "Upload a post image",
-                              upload_to="images/",
-                              default="images/default.png")
-    class Meta:
-        verbose_name = "Post Image"
-        verbose_name_plural = "Post Images"
+
