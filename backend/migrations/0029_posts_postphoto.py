@@ -11,10 +11,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='posts',
-            name='PostPhoto',
-            field=cloudinary.models.CloudinaryField(default='', max_length=255, verbose_name='image'),
-            preserve_default=False,
-        ),
+        # migrations.AddField(
+        #     model_name='posts',
+        #     name='PostPhoto',
+        #     field=cloudinary.models.CloudinaryField(default='', max_length=255, verbose_name='image'),
+        #     preserve_default=False,
+        # ),
     ]
