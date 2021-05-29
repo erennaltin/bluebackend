@@ -10,13 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='posts',
-            name='PostPhoto',
-        ),
-        migrations.AddField(
-            model_name='posts',
-            name='Photo',
-            field=models.ImageField(default='default.png', upload_to='', verbose_name='post_image'),
-        ),
+        # migrations.RemoveField(
+        #     model_name='posts',
+        #     name='PostPhoto',
+        # ),
+        # migrations.AddField(
+        #     model_name='posts',
+        #     name='Photo',
+        #     field=models.ImageField(default='default.png', upload_to='', verbose_name='post_image'),
+        # ),
     ]
