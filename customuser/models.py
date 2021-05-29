@@ -55,11 +55,11 @@ class AccountManager(BaseUserManager):
 
 
 class Account(AbstractBaseUser):
-    email = models.EmailField(verbose_name= "email", max_length= 60, unique= True)
-    username = models.CharField(max_length= 30, unique= True)
-    first_name = models.CharField(max_length= 50)
-    last_name = models.CharField(max_length= 30)
-    bio = models.TextField(max_length= 250, default="", blank=True)
+    email = models.EmailField(verbose_name= "email", max_length= 255, unique= True)
+    username = models.CharField(max_length= 255, unique= True)
+    first_name = models.CharField(max_length= 250)
+    last_name = models.CharField(max_length= 255)
+    bio = models.TextField(max_length= 3000, default="", blank=True)
     photo = models.ImageField(verbose_name= "user_image", default="userdefault.png")
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add= True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now= True)
@@ -95,7 +95,8 @@ class UserImage(models.Model):
     image = models.ImageField(verbose_name= "image",
                               help_text= "Upload a post image",
                               upload_to="images/",
-                              default="userdefault.png")
+                              default="userdefault.png",
+                              max_length=2000)
     class Meta:
         verbose_name = "User Image"
         verbose_name_plural = "User Images"
