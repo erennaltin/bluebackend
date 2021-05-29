@@ -2,7 +2,6 @@ import uuid
 from django.db import models
 from customuser.models import Account
 import datetime
-from cloudinary.models import CloudinaryField
 
 class Approval(models.Model):
     post = models.ForeignKey('Posts', on_delete=models.CASCADE)
