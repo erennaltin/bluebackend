@@ -187,17 +187,28 @@ class AddPost(graphene.Mutation):
     @staticmethod
     def mutate(root,info, post_data):
         owner_obj = Account.objects.get(username= post_data['Owner'])
-        ObjectedPost = Posts.objects.get(uuid=post_data['ObjectionTo'])
-        _post = Posts.objects.create(Owner= owner_obj,
-                                    # PublishDate= post_data['PublishDate'],
-                                    Title= post_data['Title'],
-                                    Text= post_data['Text'],
-                                    Photo= post_data['Photo'],
-                                    Tags= post_data['Tags'],
-                                    Category= post_data['Category'],
-                                    ObjectionTo= post_data['ObjectionTo']
-                                     )
-        ObjectedPost.Objections.add(_post)
+        try:
+            ObjectedPost = Posts.objects.get(uuid=post_data['ObjectionTo'])
+            _post = Posts.objects.create(Owner= owner_obj,
+                                        # PublishDate= post_data['PublishDate'],
+                                        Title= post_data['Title'],
+                                        Text= post_data['Text'],
+                                        Photo= post_data['Photo'],
+                                        Tags= post_data['Tags'],
+                                        Category= post_data['Category'],
+                                        ObjectionTo= post_data['ObjectionTo']
+                                        )
+            ObjectedPost.Objections.add(_post)
+        except:
+            _post = Posts.objects.create(Owner= owner_obj,
+                                        # PublishDate= post_data['PublishDate'],
+                                        Title= post_data['Title'],
+                                        Text= post_data['Text'],
+                                        Photo= post_data['Photo'],
+                                        Tags= post_data['Tags'],
+                                        Category= post_data['Category'],
+                                        ObjectionTo= post_data['ObjectionTo']
+                                        )
         return AddPost(post=_post)
 
 class RemovePost(graphene.Mutation):
