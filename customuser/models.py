@@ -60,7 +60,7 @@ class Account(AbstractBaseUser):
     first_name = models.CharField(max_length= 250)
     last_name = models.CharField(max_length= 255)
     bio = models.TextField(max_length= 3000, default="", blank=True)
-    photo = models.ImageField(verbose_name= "user_image", default="userdefault.png")
+    photo = models.TextField(max_length= 3000)
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add= True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now= True)
     is_admin = models.BooleanField(default= False)

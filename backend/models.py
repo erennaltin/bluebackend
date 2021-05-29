@@ -36,7 +36,7 @@ class Posts(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     Owner = models.ForeignKey(Account,on_delete=models.CASCADE)
     PublishDate = models.DateTimeField(verbose_name="date joined", auto_now_add= True)
-    Photo = models.ImageField(verbose_name="post_image", default="default.png", max_length= 3000)
+    Photo = models.TextField(max_length= 3000)
     Title = models.TextField(max_length= 3000)
     Text = models.TextField()
     Tags = models.TextField(max_length= 620)
